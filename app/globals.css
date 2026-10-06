@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/*
+ * Health Pin design tokens (same palette as the mobile app's Stitch design).
+ * Use them as Tailwind classes: bg-brand, text-ink, border-line, ...
+ */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #00645a;
+  --color-brand-hover: #00544b;
+  --color-brand-strong: #087f73;
+  --color-brand-soft: #e3f2ef;
+  --color-brand-tint: #95f3e4;
+
+  --color-canvas: #f4f8f7;
+  --color-surface: #ffffff;
+  --color-ink: #141d1b;
+  --color-muted: #55615f;
+  --color-subtle: #6e7977;
+  --color-line: #dbe5e1;
+
+  --color-danger: #ba1a1a;
+  --color-danger-soft: #ffeceb;
+  --color-success: #006640;
+  --color-success-soft: #e2f7ec;
+  --color-warning: #8a5300;
+  --color-warning-soft: #fff1dc;
+
+  --shadow-card: 0 1px 2px rgb(20 29 27 / 0.04), 0 4px 16px rgb(20 29 27 / 0.06);
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: var(--color-brand-tint);
+}
