@@ -12,7 +12,7 @@ Browser ──► Next.js server (this app) ──► Django REST API ──► 
 ```powershell
 # 1. Django (from backend/), with the Super Admin account created once:
 .\.venv\Scripts\python manage.py create_super_admin
-.\.venv\Scripts\python manage.py runserver
+.\.venv\Scripts\python manage.py runserver 0.0.0.0:8000
 
 # 2. This app
 cd web-applications/super-admin
@@ -31,11 +31,24 @@ Checks: `npm run lint`, `npm run build`.
 
 | Variable | Where | Meaning |
 | --- | --- | --- |
-| `API_BASE_URL` | `.env.local` | Django API root incl. `/api/v1`, e.g. `http://127.0.0.1:8000/api/v1` |
+| `NEXT_PUBLIC_API_BASE_URL` | `.env.local` | Django origin only: `http://192.168.31.107:8000` locally, `https://api.healthpin.in` in production |
 
-It is read only on the Next.js server. The browser never talks to Django and never sees a JWT, so
-it is deliberately not a `NEXT_PUBLIC_` variable, and Django needs no CORS entry for this app.
-No database credentials or Django secrets live here.
+The existing shared client adds `/api/v1`; normal API requests and JWT refresh
+use the same configuration in `lib/config/env.ts`. The origin is public, while
+JWTs remain in httpOnly cookies and Django requests still run on the Next.js
+server. No database credentials or Django secrets live here. Browser requests
+in future web apps must use the same public origin configuration.
+
+For local development, copy `.env.example` to `.env.local` and run `npm run dev`.
+For production, set `NEXT_PUBLIC_API_BASE_URL=https://api.healthpin.in` before
+`npm run build`, then run `npm run start`. Restart development after changes;
+rebuild production because Next.js embeds public environment variables at build
+time. Remove the old `API_BASE_URL` setting when migrating an existing deployment.
+
+Native Flutter and the current server-side Next.js calls do not require CORS.
+For any client that calls Django directly from a browser, configure its exact
+origin in Django's `CORS_ALLOWED_ORIGINS`. Production must list only trusted
+HTTPS frontend origins; there is no allow-all CORS setting.
 
 ## How authentication works
 

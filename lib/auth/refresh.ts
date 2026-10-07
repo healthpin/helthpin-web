@@ -1,4 +1,5 @@
 import type { SessionTokens } from "./cookies";
+import { serverEnv } from "@/lib/config/env";
 
 /**
  * Swaps a refresh token for a new pair (Simple JWT rotation, shared with the
@@ -6,8 +7,7 @@ import type { SessionTokens } from "./cookies";
  * Throws if Django rejects the token or can't be reached.
  */
 export async function refreshSessionTokens(refreshToken: string): Promise<SessionTokens> {
-  const baseUrl = process.env.API_BASE_URL?.trim().replace(/\/+$/, "");
-  if (!baseUrl) throw new Error("API_BASE_URL is not set.");
+  const baseUrl = serverEnv.apiBaseUrl;
 
   const response = await fetch(`${baseUrl}/auth/token/refresh/`, {
     method: "POST",
