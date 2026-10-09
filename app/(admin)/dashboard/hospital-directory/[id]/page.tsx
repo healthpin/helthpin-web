@@ -6,6 +6,9 @@ import type { ReactNode } from "react";
 import { Card } from "@/components/ui/Card";
 import { ArrowLeftIcon, MapPinIcon } from "@/components/ui/icons";
 import { getDirectoryHospital } from "@/features/hospital-directory/api/directoryApi";
+import { EditHospitalButton } from "@/features/hospital-directory/components/EditHospitalButton";
+import { MakePartnerButton } from "@/features/partners/components/MakePartnerButton";
+import { PartnerPanel } from "@/features/partners/components/PartnerPanel";
 import { DjangoApiError } from "@/lib/api/django";
 import { withAdminToken } from "@/lib/auth/adminRequest";
 import { requireSuperAdmin } from "@/lib/auth/session";
@@ -54,9 +57,9 @@ export default async function DirectoryHospitalPage({
   const numericId = Number(id);
   if (!Number.isInteger(numericId) || numericId < 1) notFound();
 
-  let hospital;
+  let hospital, partner;
   try {
-    hospital = await withAdminToken((token) => getDirectoryHospital(token, numericId));
+    ({ hospital, partner } = await withAdminToken((token) => getDirectoryHospital(token, numericId)));
   } catch (error) {
     if (error instanceof DjangoApiError && error.status === 404) notFound();
     throw error;
@@ -80,15 +83,24 @@ export default async function DirectoryHospitalPage({
         Back to directory
       </Link>
 
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold tracking-tight text-ink">{hospital.hospital_name}</h2>
-        <p className="mt-1 text-sm text-muted">
-          {[hospital.district, hospital.state].filter(Boolean).join(", ") || "Location not provided"}
-          {hospital.hospital_category ? ` · ${hospital.hospital_category}` : ""}
-        </p>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-ink">{hospital.hospital_name}</h2>
+          <p className="mt-1 text-sm text-muted">
+            {[hospital.district, hospital.state].filter(Boolean).join(", ") || "Location not provided"}
+            {hospital.hospital_category ? ` · ${hospital.hospital_category}` : ""}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 sm:justify-end">
+          {!partner && (
+            <MakePartnerButton directoryId={hospital.id} hospitalName={hospital.hospital_name} />
+          )}
+          <EditHospitalButton hospital={hospital} />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
+        {partner && <PartnerPanel partner={partner} hospitalName={hospital.hospital_name} />}
         <Card className="p-6 lg:col-span-2">
           <h3 className="mb-4 text-base font-semibold text-ink">Location</h3>
           <dl className="grid gap-5 sm:grid-cols-2">

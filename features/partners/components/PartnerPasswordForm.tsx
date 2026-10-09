@@ -7,16 +7,22 @@ import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { toast } from "@/components/ui/toast";
 
-import { changeHospitalPasswordAction } from "../actions/hospitalActions";
-import type { Hospital, PasswordFormState } from "../types/hospital";
-import { PASSWORD_MIN_LENGTH, validatePasswordChange } from "../validation";
+import { changePartnerPasswordAction } from "../actions/partnerActions";
+import type { PasswordFormState } from "../types/partner";
+import { validatePasswordChange } from "../validation";
 
 const initialState: PasswordFormState = {};
 
-/** New password + confirmation for one hospital. */
-export function HospitalPasswordForm({ hospital, onDone }: { hospital: Hospital; onDone: () => void }) {
+/** New password + confirmation for one partner. */
+export function PartnerPasswordForm({
+  directoryId,
+  onDone,
+}: {
+  directoryId: number;
+  onDone: () => void;
+}) {
   const [state, formAction, isPending] = useActionState(
-    changeHospitalPasswordAction.bind(null, hospital.id),
+    changePartnerPasswordAction.bind(null, directoryId),
     initialState,
   );
   const [clientErrors, setClientErrors] = useState<PasswordFormState["fieldErrors"]>({});
@@ -53,7 +59,6 @@ export function HospitalPasswordForm({ hospital, onDone }: { hospital: Hospital;
         name="password"
         autoComplete="new-password"
         placeholder="Create a new password"
-        hint={`At least ${PASSWORD_MIN_LENGTH} characters, with a letter and a number.`}
         error={errors.password}
         onChange={clear("password")}
         disabled={isPending}

@@ -47,7 +47,7 @@ export default async function HospitalDirectoryPage({
     <>
       <PageHeader
         title="Hospital Directory"
-        description="Reference data for hospitals across India, imported from the national directory. These are not login accounts."
+        description="Reference data for hospitals across India, imported from the national directory.."
       />
 
       <Card className="overflow-hidden">

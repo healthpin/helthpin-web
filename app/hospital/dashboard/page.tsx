@@ -24,7 +24,7 @@ export default async function HospitalDashboardPage() {
             <div>
               <h3 className="text-base font-semibold text-ink">Your hospital account is ready</h3>
               <p className="mt-1 text-sm text-muted">
-                Hospital tools such as doctors, OPD queues and appointments will appear here
+                Hospital tools such as OPD queues and appointments will appear here
                 as they are added to Health Pin.
               </p>
             </div>

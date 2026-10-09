@@ -1,6 +1,6 @@
 /**
  * Hospital directory: data imported from the national hospital CSV.
- * Read-only reference data, NOT hospital login accounts (see features/hospitals).
+ * A directory hospital becomes a partner (with a login) via features/partners.
  */
 
 /** A row in the list (GET /hospitals/directory/). */
@@ -38,6 +38,9 @@ export interface DirectoryHospital {
   specialties: string;
   facilities: string;
 }
+
+/** The editable fields of a directory hospital (everything except the id). */
+export type DirectoryHospitalInput = Partial<Omit<DirectoryHospital, "id">>;
 
 export interface DirectoryPage {
   success: true;

@@ -2,7 +2,7 @@
  * Which part of the app each account type uses. Shared by proxy.ts (no
  * Node-only imports) and server code.
  *
- *   super_admin -> /dashboard, /hospitals, ... (everything outside /hospital)
+ *   super_admin -> /dashboard, ... (everything outside /hospital)
  *   hospital    -> /hospital/...
  *
  * This only routes people to the right place. Django's permissions
@@ -23,7 +23,7 @@ function isHospitalArea(pathname: string): boolean {
   return pathname === "/hospital" || pathname.startsWith("/hospital/");
 }
 
-/** Whether `role` belongs on `pathname` (note: /hospitals is the admin list). */
+/** Whether `role` belongs on `pathname`. */
 export function isPathAllowedFor(role: WebRole, pathname: string): boolean {
   return role === "hospital" ? isHospitalArea(pathname) : !isHospitalArea(pathname);
 }

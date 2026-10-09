@@ -1,4 +1,4 @@
-import type { HospitalFieldErrors, HospitalInput } from "./types/hospital";
+import type { PartnerFieldErrors } from "./types/partner";
 
 /**
  * Mirrors the Django rules (apps/hospitals/serializers.py + passwords.py) so
@@ -6,48 +6,40 @@ import type { HospitalFieldErrors, HospitalInput } from "./types/hospital";
  * it also rejects common passwords, duplicates, etc.
  */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const PASSWORD_MIN_LENGTH = 8;
-export const NAME_MAX_LENGTH = 200;
+export const PASSWORD_MAX_LENGTH = 128;
+export const PARTNER_CATEGORIES = ["Hospital", "Clinic"] as const;
 
-export function normalizeHospitalInput(raw: {
-  name: string;
-  email: string;
-  password?: string;
-}): HospitalInput {
+export function normalizePartnerInput(raw: { email: string; password?: string; category?: string }) {
   return {
-    name: raw.name.replace(/\s+/g, " ").trim(),
     email: raw.email.trim().toLowerCase(),
     password: raw.password ?? "",
+    category: (raw.category ?? "").trim(),
   };
 }
 
-export function validateHospitalInput(
-  input: HospitalInput,
+export function validatePartnerInput(
+  input: ReturnType<typeof normalizePartnerInput>,
   { requirePassword }: { requirePassword: boolean },
-): HospitalFieldErrors {
-  const errors: HospitalFieldErrors = {};
+): PartnerFieldErrors {
+  const errors: PartnerFieldErrors = {};
 
-  if (input.name.length < 2) errors.name = "Enter the hospital name.";
-  else if (input.name.length > NAME_MAX_LENGTH)
-    errors.name = `Name can be at most ${NAME_MAX_LENGTH} characters.`;
-
-  if (!input.email) errors.email = "Enter the hospital's email address.";
+  if (!input.email) errors.email = "Enter the partner's email address.";
   else if (!EMAIL_PATTERN.test(input.email)) errors.email = "Enter a valid email address.";
 
   if (requirePassword) {
     const problem = passwordProblem(input.password);
     if (problem) errors.password = problem;
   }
+  if (!(PARTNER_CATEGORIES as readonly string[]).includes(input.category))
+    errors.category = "Choose Hospital or Clinic.";
   return errors;
 }
 
-/** Basic password rules (Django also rejects common passwords etc.). */
+/** Any non-empty password is fine: no length or character-mix rules. */
 export function passwordProblem(password: string): string | undefined {
   if (!password) return "Enter a password.";
-  if (password.length < PASSWORD_MIN_LENGTH)
-    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
-  if (!/[A-Za-z]/.test(password) || !/\d/.test(password))
-    return "Password must contain at least one letter and one number.";
+  if (password.length > PASSWORD_MAX_LENGTH)
+    return `Password can be at most ${PASSWORD_MAX_LENGTH} characters.`;
   return undefined;
 }
 
@@ -64,6 +56,6 @@ export function validatePasswordChange(
   return errors;
 }
 
-export function hasFieldErrors(errors: HospitalFieldErrors): boolean {
+export function hasFieldErrors(errors: PartnerFieldErrors): boolean {
   return Object.values(errors).some(Boolean);
 }
