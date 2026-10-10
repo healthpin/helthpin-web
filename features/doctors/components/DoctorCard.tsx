@@ -96,13 +96,16 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
       <div className="mt-auto flex justify-end gap-1 border-t border-line pt-3">
         <DoctorDialog doctor={doctor} />
         <Button
-          variant={willActivate ? "ghost" : "danger"}
+          variant="secondary"
           size="sm"
           onClick={toggle}
           isLoading={isPending}
-          aria-label={`${willActivate ? "Activate" : "Deactivate"} ${doctor.full_name}`}
+          role="switch"
+          aria-checked={doctor.is_active}
+          aria-label={`Availability for ${doctor.full_name}`}
         >
-          {willActivate ? "Activate" : "Deactivate"}
+          <span aria-hidden="true" className={cn("flex h-5 w-9 items-center rounded-full p-0.5 transition-colors", doctor.is_active ? "bg-brand" : "bg-line")}><span className={cn("size-4 rounded-full bg-white shadow transition-transform", doctor.is_active && "translate-x-4")} /></span>
+          {doctor.is_active ? "Active" : "Inactive"}
         </Button>
       </div>
     </Card>

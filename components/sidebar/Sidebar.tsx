@@ -87,6 +87,7 @@ export function Sidebar({ area, isOpen, onClose }: SidebarProps) {
             </div>
           ))}
         </nav>
+        {area === "hospital" && <div className="m-4 rounded-2xl bg-brand-soft p-4"><p className="text-sm font-semibold text-brand">Care, connected.</p><p className="mt-1 text-xs leading-5 text-muted">Manage appointments, support your doctors and keep patients moving.</p></div>}
       </aside>
     </>
   );

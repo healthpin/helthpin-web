@@ -3,11 +3,8 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { CalendarIcon, SearchIcon } from "@/components/ui/icons";
-import { Pagination } from "@/components/ui/Pagination";
-import { listBookings } from "@/features/bookings/api/bookingsApi";
-import { BookingsTable } from "@/features/bookings/components/BookingsTable";
+import { getLiveQueue, listBookings } from "@/features/bookings/api/bookingsApi";
+import { LiveBookings } from "@/features/bookings/components/LiveBookings";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
 import { requireHospital } from "@/lib/auth/session";
 import { cn } from "@/lib/utils/cn";
@@ -24,20 +21,22 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
   const params = await searchParams;
   // Upcoming = still to come. Past = finished (they move there on their own
   // once their time is over) plus cancelled ones.
-  const scope = params.scope === "past" ? "past" : "upcoming";
+  const scope = params.scope === "past" ? "past" : params.scope === "upcoming" ? "upcoming" : "all";
   const search = typeof params.search === "string" ? params.search.trim() : "";
   const date = typeof params.date === "string" && DATE_PATTERN.test(params.date) ? params.date : undefined;
   const status = scope === "past" ? PAST_STATUSES.find((s) => s === params.status) : undefined;
   const page = Math.max(1, Number(params.page) || 1);
 
-  const data = await withHospitalToken((token) =>
-    listBookings(token, { scope, date, status, search, page }),
-  );
+  const query = { scope: scope === "all" ? undefined : scope, date, status, search, page } as const;
+  const data = await withHospitalToken(async (token) => {
+    const [bookings, queue] = await Promise.all([listBookings(token, query), getLiveQueue(token)]);
+    return { bookings, queue };
+  });
 
   const href = (next: { scope?: string; status?: string; page?: number }) => {
     const query = new URLSearchParams();
     const nextScope = next.scope ?? scope;
-    if (nextScope !== "upcoming") query.set("scope", nextScope);
+    if (nextScope !== "all") query.set("scope", nextScope);
     if (date) query.set("date", date);
     if (search) query.set("search", search);
     const nextStatus = "status" in next ? next.status : status;
@@ -46,8 +45,6 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
     const qs = query.toString();
     return qs ? `${BASE}?${qs}` : BASE;
   };
-
-  const filtered = Boolean(search || date || status);
 
   return (
     <>
@@ -64,12 +61,11 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
         }
       />
 
-      <div role="tablist" aria-label="Bookings" className="mb-4 flex gap-1 border-b border-line">
-        {(["upcoming", "past"] as const).map((tab) => (
+      <nav aria-label="Booking views" className="mb-4 flex gap-1 border-b border-line">
+        {(["all", "upcoming", "past"] as const).map((tab) => (
           <Link
             key={tab}
-            role="tab"
-            aria-selected={scope === tab}
+            aria-current={scope === tab ? "page" : undefined}
             href={href({ scope: tab, status: undefined, page: 1 })}
             className={cn(
               "-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold",
@@ -78,14 +74,14 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
                 : "border-transparent text-muted hover:text-ink",
             )}
           >
-            {tab === "upcoming" ? "Upcoming" : "Past"}
+            {tab === "all" ? "All bookings" : tab === "upcoming" ? "Upcoming" : "Past"}
           </Link>
         ))}
-      </div>
+      </nav>
 
       <Card className="mb-4 flex flex-col gap-3 p-4">
         <form action={BASE} className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          {scope === "past" && <input type="hidden" name="scope" value="past" />}
+          {scope !== "all" && <input type="hidden" name="scope" value={scope} />}
           {status && <input type="hidden" name="status" value={status} />}
           <input
             type="date"
@@ -128,44 +124,8 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
         )}
       </Card>
 
-      <Card className="overflow-hidden">
-        {data.results.length > 0 ? (
-          <>
-            <p className="border-b border-line px-4 py-3 text-sm text-muted">
-              {data.count} {scope === "past" ? "past" : "upcoming"}{" "}
-              {data.count === 1 ? "booking" : "bookings"}
-              {filtered ? " found" : ""}
-            </p>
-            <BookingsTable bookings={data.results} />
-          </>
-        ) : filtered ? (
-          <EmptyState
-            icon={SearchIcon}
-            title="No matching bookings"
-            description="Try another date or search."
-          />
-        ) : scope === "upcoming" ? (
-          <EmptyState
-            icon={CalendarIcon}
-            title="No upcoming bookings"
-            description="New appointments appear here, already confirmed, as patients book."
-          />
-        ) : (
-          <EmptyState
-            icon={CalendarIcon}
-            title="No past bookings yet"
-            description="Appointments move here automatically once their time is over."
-          />
-        )}
-      </Card>
+      <LiveBookings key={JSON.stringify(query)} initial={data} query={query} />
 
-      <Pagination
-        page={data.page}
-        totalPages={data.total_pages}
-        totalCount={data.count}
-        pageSize={data.page_size}
-        hrefForPage={(target) => href({ page: target })}
-      />
     </>
   );
 }

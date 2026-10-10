@@ -1,9 +1,16 @@
-import { formatDate, formatTime, type Booking } from "../types/booking";
+import { formatDate, formatTime, formatWait, type LiveQueue, type Booking } from "../types/booking";
 import { BookingActions } from "./BookingActions";
 import { BookingStatusBadge } from "./BookingStatusBadge";
 
 /** Table on wide screens, stacked cards on phones. */
-export function BookingsTable({ bookings }: { bookings: Booking[] }) {
+export function BookingsTable({ bookings, queue, onChanged }: { bookings: Booking[]; queue?: LiveQueue; onChanged?: () => void }) {
+  const waits = new Map(queue?.doctors.flatMap((doctor) => doctor.queue.map((entry) => [entry.booking_id, entry.wait_minutes] as const)) ?? []);
+  const waitLabel = (booking: Booking) => {
+    const wait = waits.get(booking.booking_id);
+    if (wait !== undefined) return wait === 0 ? "Next / being seen" : `~${formatWait(wait)}`;
+    if (booking.status === "Cancelled" || booking.status === "Completed") return "Not waiting";
+    return booking.booking_date !== queue?.date ? "On appointment day" : "Updating...";
+  };
   return (
     <>
       <div className="hidden overflow-x-auto lg:block">
@@ -16,6 +23,7 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
               <th scope="col" className="px-4 py-3">Date</th>
               <th scope="col" className="px-4 py-3">Token / time</th>
               <th scope="col" className="px-4 py-3">Status</th>
+              <th scope="col" className="px-4 py-3">Est. wait</th>
               <th scope="col" className="px-5 py-3 text-right">Actions</th>
             </tr>
           </thead>
@@ -42,8 +50,9 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
                 <td className="px-4 py-3">
                   <BookingStatusBadge status={b.status} />
                 </td>
+                <td className="whitespace-nowrap px-4 py-3 text-sm text-muted">{waitLabel(b)}</td>
                 <td className="px-5 py-3">
-                  <BookingActions bookingId={b.booking_id} status={b.status} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
+                  <BookingActions onChanged={onChanged} bookingId={b.booking_id} status={b.can_cancel ? b.status : "Completed"} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
                 </td>
               </tr>
             ))}
@@ -67,8 +76,9 @@ export function BookingsTable({ bookings }: { bookings: Booking[] }) {
               {formatDate(b.booking_date)} · Token {b.token_number} · {formatTime(b.slot_start)}–
               {formatTime(b.slot_end)}
             </div>
+            <p className="text-xs text-brand">Estimated wait: {waitLabel(b)}</p>
             {b.notes && <div className="text-xs text-subtle">{b.notes}</div>}
-            <BookingActions bookingId={b.booking_id} status={b.status} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
+            <BookingActions onChanged={onChanged} bookingId={b.booking_id} status={b.can_cancel ? b.status : "Completed"} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
           </li>
         ))}
       </ul>

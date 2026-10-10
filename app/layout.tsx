@@ -6,8 +6,8 @@ import "./globals.css";
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "Health Pin Super Admin", template: "%s · Health Pin Super Admin" },
-  description: "Administration console for the Health Pin platform.",
+  title: { default: "Health Pin Dashboard", template: "%s · Health Pin" },
+  description: "Hospital management and administration for the Health Pin platform.",
   icons: { icon: "/brand-logo.jpg" },
   robots: { index: false, follow: false },
 };

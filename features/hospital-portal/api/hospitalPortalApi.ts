@@ -12,3 +12,11 @@ export async function fetchCurrentHospital(accessToken: string): Promise<Current
   );
   return data.hospital;
 }
+
+export function getHospitalDashboard(accessToken: string) {
+  return djangoFetch<import("../types/hospitalPortal").HospitalDashboard>("/hospital/dashboard/", { accessToken });
+}
+export async function getHospitalProfile(accessToken: string) {
+  const result = await djangoFetch<{ profile: import("../types/hospitalPortal").HospitalProfile }>("/hospital/profile/", { accessToken });
+  return result.profile;
+}

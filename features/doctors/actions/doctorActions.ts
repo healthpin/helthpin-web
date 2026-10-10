@@ -114,6 +114,7 @@ export async function saveDoctorAction(
       doctorId === null ? createDoctor(token, payload(input)) : updateDoctor(token, doctorId, payload(input)),
     );
     revalidatePath(DOCTORS_PATH);
+    revalidatePath("/hospital/dashboard");
     return {
       successAt: Date.now(),
       successMessage: `${doctor.full_name} was ${doctorId === null ? "added" : "updated"}.`,
@@ -127,6 +128,7 @@ export async function setDoctorActiveAction(doctorId: number, active: boolean): 
   try {
     const doctor = await withHospitalToken((token) => updateDoctor(token, doctorId, { is_active: active }));
     revalidatePath(DOCTORS_PATH);
+    revalidatePath("/hospital/dashboard");
     return { ok: true, message: `${doctor.full_name} is now ${active ? "active" : "inactive"}.` };
   } catch (error) {
     if (error instanceof DjangoApiError) return { ok: false, message: error.message };

@@ -130,3 +130,54 @@ are reference data, not login accounts. Code: `features/hospital-directory/` and
 
 The dashboard numbers are placeholders from `features/dashboard/data/mockDashboardStats.ts`
 (shown with a "Demo data" badge). Replace the body of `getDashboardStats()` when a stats API exists.
+
+
+## Hospital management dashboard
+
+Hospital accounts land at `/hospital/dashboard`. The responsive sidebar links
+Overview, Bookings, Doctors, Live Queue, and Profile & Settings. On phones,
+booking tables become stacked appointment cards and the sidebar opens as a drawer.
+The layout uses the shared soft teal/white design tokens in `app/globals.css`.
+
+- **Overview:** real hospital-scoped statistics, seven-day booking activity,
+  today's patient flow and the six latest bookings for today.
+- **Bookings:** All / Upcoming / Past views, date and patient/doctor search,
+  token numbers, 15-minute slots, status, estimated waits and confirmed cancellation.
+- **Doctors:** searchable, paginated doctor cards with photos, qualifications,
+  specialties, departments, designations, availability switches and Add/Edit.
+  The modal preserves entered data on errors, has one scroll container, an
+  All Day toggle (all seven weekdays), and AM/PM time-picker dialogs.
+- **Settings:** hospital name, contact/address details, Hospital/Clinic category,
+  sign-in email and password. Password changes require the current password
+  and matching confirmation, revoke refresh sessions, and return to sign-in.
+
+Overview and Bookings refresh every 15 seconds while visible. They retain the
+last successful data and display a connection message when refresh fails.
+Wait times are estimates from the existing queue (tokens ahead times 15 minutes),
+not measured patient arrival or consultation duration. Total patients counts
+unique patient accounts with non-cancelled bookings.
+
+Backend endpoints (all require an active hospital account):
+
+- `GET /api/v1/hospital/dashboard/`
+- `GET/PATCH /api/v1/hospital/profile/`
+- `POST /api/v1/hospital/password/`
+
+Restart Django and Next.js after updating. No additional packages or database
+migrations are needed for these dashboard changes. Local frontend configuration:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Validation:
+
+```powershell
+# From backend/
+.\.venv\Scripts\python manage.py test apps.hospitals.test_portal apps.bookings apps.doctors --noinput
+
+# From helthpin-web/
+npx.cmd tsc --noEmit
+npm.cmd run lint
+npm.cmd run build
+```
