@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils/cn";
 
 import { saveDoctorAction } from "../actions/doctorActions";
+import { TimePicker } from "./TimePicker";
 import { DEPARTMENTS, DESIGNATIONS, SPECIALIZATIONS } from "../options";
 import {
   GENDERS,
@@ -30,7 +31,8 @@ function SelectField({
   name,
   error,
   disabled,
-  defaultValue,
+  value,
+  onChange,
   placeholder,
   children,
 }: {
@@ -38,7 +40,8 @@ function SelectField({
   name: DoctorField;
   error?: string;
   disabled: boolean;
-  defaultValue: string;
+  value: string;
+  onChange: (value: string) => void;
   placeholder?: string;
   children: ReactNode;
 }) {
@@ -50,9 +53,11 @@ function SelectField({
       <select
         id={`doctor-${name}`}
         name={name}
-        defaultValue={defaultValue}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
         aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `doctor-${name}-error` : undefined}
         className={cn(
           "h-11 w-full rounded-lg border bg-surface px-3 text-[15px] text-ink outline-none transition focus:ring-4",
           error
@@ -67,7 +72,7 @@ function SelectField({
         )}
         {children}
       </select>
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {error && <p id={`doctor-${name}-error`} className="text-sm text-danger">{error}</p>}
     </div>
   );
 }
@@ -91,7 +96,36 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
   const errors = state.fieldErrors ?? {};
   const [start, setStart] = useState(hhmm(doctor?.start_time ?? null));
   const [end, setEnd] = useState(hhmm(doctor?.end_time ?? null));
+  const [days, setDays] = useState<number[]>(doctor?.working_days ?? []);
+  const [values, setValues] = useState<Record<string, string>>({
+    full_name: doctor?.full_name ?? "",
+    photo_url: doctor?.photo_url ?? "",
+    gender: doctor?.gender ?? "",
+    qualification: doctor?.qualification ?? "",
+    specialization: doctor?.specialization ?? "",
+    experience_years: String(doctor?.experience_years ?? ""),
+    department: doctor?.department ?? "",
+    designation: doctor?.designation ?? "",
+    is_active: doctor && !doctor.is_active ? "inactive" : "active",
+    token_count: String(doctor?.token_count ?? ""),
+  });
+  const field = (name: string) => ({
+    value: values[name],
+    onChange: (event: ChangeEvent<HTMLInputElement>) =>
+      setValues((current) => ({ ...current, [name]: event.target.value })),
+  });
+  const select = (name: string) => ({
+    value: values[name],
+    onChange: (value: string) => setValues((current) => ({ ...current, [name]: value })),
+  });
+  const formRef = useRef<HTMLFormElement>(null);
   const fits = tokensThatFit(start, end);
+
+  useEffect(() => {
+    if (state.fieldErrors) {
+      formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-invalid="true"]')?.focus();
+    }
+  }, [state]);
 
   useEffect(() => {
     if (state.successAt && state.successAt !== handledSuccess.current) {
@@ -102,15 +136,15 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
   }, [state, onDone]);
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} noValidate className="flex flex-col gap-4">
       {state.message && <Alert>{state.message}</Alert>}
 
-      <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto pr-1">
+      <div className="flex flex-col gap-4">
         <TextField
           label="Full name"
           name="full_name"
           placeholder="Dr. Asha Nair"
-          defaultValue={doctor?.full_name}
+          {...field("full_name")}
           error={errors.full_name}
           disabled={isPending}
           maxLength={200}
@@ -122,7 +156,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
           type="url"
           inputMode="url"
           placeholder="https://example.com/photo.jpg"
-          defaultValue={doctor?.photo_url}
+          {...field("photo_url")}
           error={errors.photo_url}
           disabled={isPending}
           maxLength={500}
@@ -130,7 +164,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
         <SelectField
           label="Gender"
           name="gender"
-          defaultValue={doctor?.gender ?? ""}
+          {...select("gender")}
           placeholder="Select gender"
           error={errors.gender}
           disabled={isPending}
@@ -145,7 +179,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
           label="Qualification"
           name="qualification"
           placeholder="MBBS, MD"
-          defaultValue={doctor?.qualification}
+          {...field("qualification")}
           error={errors.qualification}
           disabled={isPending}
           maxLength={200}
@@ -153,7 +187,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
         <SelectField
           label="Specialization"
           name="specialization"
-          defaultValue={doctor?.specialization ?? ""}
+          {...select("specialization")}
           placeholder="Select specialization"
           error={errors.specialization}
           disabled={isPending}
@@ -168,14 +202,14 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
           min={0}
           max={80}
           step={1}
-          defaultValue={doctor?.experience_years}
+          {...field("experience_years")}
           error={errors.experience_years}
           disabled={isPending}
         />
         <SelectField
           label="Department"
           name="department"
-          defaultValue={doctor?.department ?? ""}
+          {...select("department")}
           placeholder="Select department"
           error={errors.department}
           disabled={isPending}
@@ -185,7 +219,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
         <SelectField
           label="Designation"
           name="designation"
-          defaultValue={doctor?.designation ?? ""}
+          {...select("designation")}
           placeholder="Select designation"
           error={errors.designation}
           disabled={isPending}
@@ -195,7 +229,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
         <SelectField
           label="Availability status"
           name="is_active"
-          defaultValue={doctor && !doctor.is_active ? "inactive" : "active"}
+          {...select("is_active")}
           error={errors.is_active}
           disabled={isPending}
         >
@@ -210,17 +244,29 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
             shouldn&apos;t take bookings yet.
           </p>
           <div>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Working days">
+            <div className={cn("flex flex-wrap gap-2 rounded-lg", errors.working_days && "p-2 ring-1 ring-danger")} role="group" aria-label="Working days">
+              <button
+                type="button"
+                aria-pressed={days.length === WEEKDAYS.length}
+                disabled={isPending}
+                onClick={() => setDays(days.length === WEEKDAYS.length ? [] : WEEKDAYS.map((_, index) => index))}
+                className={cn("rounded-full border px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand", days.length === WEEKDAYS.length ? "border-brand bg-brand-soft text-brand" : "border-line text-ink")}
+              >
+                All Day
+              </button>
               {WEEKDAYS.map((day, index) => (
                 <label
                   key={day}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-sm has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-sm has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand"
                 >
                   <input
                     type="checkbox"
                     name="working_days"
                     value={index}
-                    defaultChecked={doctor?.working_days.includes(index)}
+                    checked={days.includes(index)}
+                    onChange={(event) => setDays((current) => event.target.checked ? [...current, index].sort() : current.filter((value) => value !== index))}
+                    aria-invalid={errors.working_days ? true : undefined}
+                    aria-describedby={errors.working_days ? "doctor-working-days-error" : undefined}
                     disabled={isPending}
                     className="sr-only"
                   />
@@ -228,24 +274,23 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
                 </label>
               ))}
             </div>
-            {errors.working_days && <p className="mt-1.5 text-sm text-danger">{errors.working_days}</p>}
+            {errors.working_days && <p id="doctor-working-days-error" className="mt-1.5 text-sm text-danger">{errors.working_days}</p>}
           </div>
+          <p className="text-xs text-muted">All Day selects every day of the week. Choose booking hours below.</p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
+            <TimePicker
               label="Start time"
               name="start_time"
-              type="time"
               value={start}
-              onChange={(event) => setStart(event.target.value)}
+              onChange={setStart}
               error={errors.start_time}
               disabled={isPending}
             />
-            <TextField
+            <TimePicker
               label="End time"
               name="end_time"
-              type="time"
               value={end}
-              onChange={(event) => setEnd(event.target.value)}
+              onChange={setEnd}
               error={errors.end_time}
               disabled={isPending}
             />
@@ -258,7 +303,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
             min={1}
             max={Math.max(fits, 1)}
             step={1}
-            defaultValue={doctor?.token_count ?? ""}
+            {...field("token_count")}
             error={errors.token_count}
             hint={fits > 0 ? `Up to ${fits} tokens fit between these times.` : undefined}
             disabled={isPending}
