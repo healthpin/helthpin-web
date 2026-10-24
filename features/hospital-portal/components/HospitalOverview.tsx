@@ -36,7 +36,7 @@ export function HospitalOverview({ initial }: { initial: HospitalDashboard }) {
           <span className="sr-only">{day.date}: {day.count} bookings</span>
         </div>)}</div>
       </Card>
-      <Card className="p-6"><h2 className="font-semibold">Today&apos;s patient flow</h2><p className="mt-1 text-sm text-muted">Every token is a 15-minute slot</p>
+      <Card className="p-6"><h2 className="font-semibold">Today&apos;s patient flow</h2><p className="mt-1 text-sm text-muted">Each token is one appointment slot</p>
         <dl className="mt-5 space-y-4">{[["In the queue", stats.waiting], ["Completed", stats.completed], ["Cancelled", stats.cancelled]].map(([label, value]) => <div key={label} className="flex items-center justify-between rounded-xl bg-canvas px-4 py-3"><dt className="text-sm text-muted">{label}</dt><dd className="text-xl font-semibold text-brand">{value}</dd></div>)}</dl>
         <Link href="/hospital/queue" className="mt-5 block text-sm font-semibold text-brand hover:underline">Open live queue &rarr;</Link>
       </Card>

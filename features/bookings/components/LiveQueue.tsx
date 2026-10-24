@@ -43,7 +43,7 @@ function DoctorQueueCard({
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-base font-semibold text-ink">{doctor.doctor_name}</h3>
-          <p className="text-sm text-muted">{doctor.specialization}</p>
+          <p className="text-sm text-muted">{doctor.specialization} · {doctor.token_minutes}-minute appointments</p>
         </div>
         <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand">
           {doctor.now_serving === null ? "Queue empty" : `Now serving token ${doctor.now_serving}`}
@@ -138,7 +138,7 @@ export function LiveQueue({ initial, date }: { initial: LiveQueueData; date?: st
     <>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
-          {formatDate(queue.date)} · each token is {queue.token_minutes} minutes
+          {formatDate(queue.date)} · each doctor&apos;s appointment length is on their card
         </p>
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 text-xs text-muted" aria-live="polite">

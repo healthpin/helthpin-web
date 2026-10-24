@@ -1,9 +1,11 @@
 import { formatDate, formatTime, formatWait, type LiveQueue, type Booking } from "../types/booking";
+import { PrescriptionAction } from "@/features/prescriptions/components/PrescriptionAction";
+import type { PrescriptionsByBooking } from "@/features/prescriptions/types/prescription";
 import { BookingActions } from "./BookingActions";
 import { BookingStatusBadge } from "./BookingStatusBadge";
 
 /** Table on wide screens, stacked cards on phones. */
-export function BookingsTable({ bookings, queue, onChanged }: { bookings: Booking[]; queue?: LiveQueue; onChanged?: () => void }) {
+export function BookingsTable({ bookings, queue, prescriptions = {}, onChanged }: { bookings: Booking[]; queue?: LiveQueue; prescriptions?: PrescriptionsByBooking; onChanged?: () => void }) {
   const waits = new Map(queue?.doctors.flatMap((doctor) => doctor.queue.map((entry) => [entry.booking_id, entry.wait_minutes] as const)) ?? []);
   const waitLabel = (booking: Booking) => {
     const wait = waits.get(booking.booking_id);
@@ -52,6 +54,7 @@ export function BookingsTable({ bookings, queue, onChanged }: { bookings: Bookin
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-sm text-muted">{waitLabel(b)}</td>
                 <td className="px-5 py-3">
+                  <PrescriptionAction booking={b} prescription={prescriptions[b.booking_id]} onChanged={onChanged} />
                   <BookingActions onChanged={onChanged} bookingId={b.booking_id} status={b.can_cancel ? b.status : "Completed"} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
                 </td>
               </tr>
@@ -78,6 +81,7 @@ export function BookingsTable({ bookings, queue, onChanged }: { bookings: Bookin
             </div>
             <p className="text-xs text-brand">Estimated wait: {waitLabel(b)}</p>
             {b.notes && <div className="text-xs text-subtle">{b.notes}</div>}
+            <PrescriptionAction booking={b} prescription={prescriptions[b.booking_id]} onChanged={onChanged} />
             <BookingActions onChanged={onChanged} bookingId={b.booking_id} status={b.can_cancel ? b.status : "Completed"} patientName={b.patient_name} when={{ date: b.booking_date, time: b.slot_start }} />
           </li>
         ))}

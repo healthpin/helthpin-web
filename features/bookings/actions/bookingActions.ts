@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { DjangoApiError } from "@/lib/api/django";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
 
+import { listPrescriptionsForBookings } from "@/features/prescriptions/api/prescriptionsApi";
+
 import { getLiveQueue, listBookings, setBookingStatus } from "../api/bookingsApi";
 import type { ActionResult, BookingQuery, LiveQueue } from "../types/booking";
 
@@ -37,7 +39,8 @@ export async function fetchBookingsAction(query: BookingQuery) {
   try {
     return await withHospitalToken(async (token) => {
       const [bookings, queue] = await Promise.all([listBookings(token, query), getLiveQueue(token)]);
-      return { bookings, queue };
+      const prescriptions = await listPrescriptionsForBookings(token, bookings.results.map((b) => b.booking_id));
+      return { bookings, queue, prescriptions };
     });
   } catch (error) { if (error instanceof DjangoApiError) return null; throw error; }
 }

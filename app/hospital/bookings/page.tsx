@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { getLiveQueue, listBookings } from "@/features/bookings/api/bookingsApi";
 import { LiveBookings } from "@/features/bookings/components/LiveBookings";
+import { listPrescriptionsForBookings } from "@/features/prescriptions/api/prescriptionsApi";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
 import { requireHospital } from "@/lib/auth/session";
 import { cn } from "@/lib/utils/cn";
@@ -30,7 +31,8 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
   const query = { scope: scope === "all" ? undefined : scope, date, status, search, page } as const;
   const data = await withHospitalToken(async (token) => {
     const [bookings, queue] = await Promise.all([listBookings(token, query), getLiveQueue(token)]);
-    return { bookings, queue };
+    const prescriptions = await listPrescriptionsForBookings(token, bookings.results.map((b) => b.booking_id));
+    return { bookings, queue, prescriptions };
   });
 
   const href = (next: { scope?: string; status?: string; page?: number }) => {

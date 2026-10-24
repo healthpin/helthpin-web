@@ -16,7 +16,8 @@ import { DEPARTMENTS, DESIGNATIONS, SPECIALIZATIONS } from "../options";
 import {
   GENDERS,
   hhmm,
-  TOKEN_MINUTES,
+  DEFAULT_SLOT_MINUTES,
+  SLOT_MINUTE_OPTIONS,
   tokensThatFit,
   WEEKDAYS,
   type Doctor,
@@ -108,6 +109,7 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
     designation: doctor?.designation ?? "",
     is_active: doctor && !doctor.is_active ? "inactive" : "active",
     token_count: String(doctor?.token_count ?? ""),
+    slot_minutes: String(doctor?.slot_minutes ?? DEFAULT_SLOT_MINUTES),
   });
   const field = (name: string) => ({
     value: values[name],
@@ -119,7 +121,8 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
     onChange: (value: string) => setValues((current) => ({ ...current, [name]: value })),
   });
   const formRef = useRef<HTMLFormElement>(null);
-  const fits = tokensThatFit(start, end);
+  const slotMinutes = Number(values.slot_minutes) || DEFAULT_SLOT_MINUTES;
+  const fits = tokensThatFit(start, end, slotMinutes);
 
   useEffect(() => {
     if (state.fieldErrors) {
@@ -240,9 +243,29 @@ function DoctorForm({ doctor, onDone }: { doctor?: Doctor; onDone: () => void })
         <fieldset className="flex flex-col gap-3 rounded-lg border border-line p-4">
           <legend className="px-1 text-sm font-semibold text-ink">Token schedule</legend>
           <p className="text-sm text-muted">
-            Patients book tokens of {TOKEN_MINUTES} minutes each. Leave empty if this doctor
+            Patients book tokens of {slotMinutes} minutes each. Leave empty if this doctor
             shouldn&apos;t take bookings yet.
           </p>
+          <SelectField
+            label="Appointment Slot Duration (minutes)"
+            name="slot_minutes"
+            {...select("slot_minutes")}
+            error={errors.slot_minutes}
+            disabled={isPending}
+          >
+            {SLOT_MINUTE_OPTIONS.map((minutes) => (
+              <option key={minutes} value={minutes}>
+                {minutes} minutes{minutes === DEFAULT_SLOT_MINUTES ? " (default)" : ""}
+              </option>
+            ))}
+          </SelectField>
+          {doctor && (
+            <p className="text-xs text-muted">
+              A new duration applies to days that have no bookings yet. Days that already have
+              bookings keep their current duration until those bookings are gone, so no existing
+              appointment moves.
+            </p>
+          )}
           <div>
             <div className={cn("flex flex-wrap gap-2 rounded-lg", errors.working_days && "p-2 ring-1 ring-danger")} role="group" aria-label="Working days">
               <button

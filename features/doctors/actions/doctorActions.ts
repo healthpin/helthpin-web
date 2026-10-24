@@ -13,7 +13,7 @@ import type {
   DoctorFormState,
   DoctorInput,
 } from "../types/doctor";
-import { TOKEN_MINUTES, tokensThatFit } from "../types/doctor";
+import { DEFAULT_SLOT_MINUTES, SLOT_MINUTE_OPTIONS, tokensThatFit } from "../types/doctor";
 
 const DOCTORS_PATH = "/hospital/doctors";
 const TEXT_FIELDS = [
@@ -40,7 +40,7 @@ function readForm(formData: FormData): DoctorInput {
   return {
     ...(Object.fromEntries(TEXT_FIELDS.map((name) => [name, text(name)])) as Omit<
       DoctorInput,
-      "experience_years" | "is_active" | "working_days" | "start_time" | "end_time" | "token_count"
+      "experience_years" | "is_active" | "working_days" | "start_time" | "end_time" | "token_count" | "slot_minutes"
     >),
     experience_years: years === "" ? null : Number(years),
     is_active: text("is_active") !== "inactive",
@@ -48,6 +48,7 @@ function readForm(formData: FormData): DoctorInput {
     start_time: text("start_time"),
     end_time: text("end_time"),
     token_count: text("token_count") === "" ? null : Number(text("token_count")),
+    slot_minutes: text("slot_minutes") === "" ? DEFAULT_SLOT_MINUTES : Number(text("slot_minutes")),
   };
 }
 
@@ -61,7 +62,9 @@ function validate(input: DoctorInput): DoctorFieldErrors {
     errors.experience_years = "Enter whole years, from 0 to 80.";
   if (input.photo_url && !/^https?:\/\//i.test(input.photo_url))
     errors.photo_url = "Enter a link starting with http:// or https://.";
-  // The token schedule is all-or-nothing, and every token is 15 minutes.
+  if (!(SLOT_MINUTE_OPTIONS as readonly number[]).includes(input.slot_minutes))
+    errors.slot_minutes = `Choose ${SLOT_MINUTE_OPTIONS.slice(0, -1).join(", ")} or ${SLOT_MINUTE_OPTIONS.at(-1)} minutes.`;
+  // The token schedule is all-or-nothing; every token is the doctor's slot length.
   const hasSchedule =
     input.working_days.length > 0 || input.start_time || input.end_time || input.token_count !== null;
   if (hasSchedule) {
@@ -69,10 +72,10 @@ function validate(input: DoctorInput): DoctorFieldErrors {
     if (!input.start_time) errors.start_time = "Set the start time.";
     if (!input.end_time) errors.end_time = "Set the end time.";
     if (input.start_time && input.end_time) {
-      const fits = tokensThatFit(input.start_time, input.end_time);
+      const fits = tokensThatFit(input.start_time, input.end_time, input.slot_minutes);
       if (fits < 1) errors.end_time = "End time must be after the start time.";
       else if (input.token_count !== null && input.token_count > fits)
-        errors.token_count = `Only ${fits} tokens of ${TOKEN_MINUTES} minutes fit in this time.`;
+        errors.token_count = `Only ${fits} tokens of ${input.slot_minutes} minutes fit in this time.`;
     }
     if (input.token_count === null || !Number.isInteger(input.token_count) || input.token_count < 1)
       errors.token_count ??= "Enter how many tokens per day.";

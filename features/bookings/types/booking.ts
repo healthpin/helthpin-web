@@ -62,12 +62,15 @@ export interface DoctorQueue {
   waiting: number;
   now_serving: number | null;
   queue_clears_in_minutes: number;
+  /** This doctor's appointment length for the day, in minutes. */
+  token_minutes: number;
   queue: QueueEntry[];
 }
 
 export interface LiveQueue {
   success: true;
   date: string;
+  /** The default length only; each doctor has their own (doctors[].token_minutes). */
   token_minutes: number;
   doctors: DoctorQueue[];
 }
