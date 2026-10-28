@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/Spinner";
 import type { DirectoryFilterOptions } from "../types/directory";
 
 const inputClass =
-  "h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15";
+  "h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 /**
  * Name / location search and state / district / category filters. Everything

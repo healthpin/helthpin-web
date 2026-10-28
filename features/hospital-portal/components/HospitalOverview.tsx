@@ -22,16 +22,16 @@ export function HospitalOverview({ initial }: { initial: HospitalDashboard }) {
   ];
   return <div className="space-y-6">
     <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted">{formatDate(data.date)} | Your hospital at a glance</p><LiveIndicator {...live} /></div>
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map(({ label, value, hint, icon: Icon }) => <Card key={label} className="p-5">
+    <div className="grid overflow-hidden rounded-2xl border border-line bg-surface divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">{cards.map(({ label, value, hint, icon: Icon }) => <div key={label} className="p-5 sm:p-6">
       <div className="flex items-center justify-between gap-2"><p className="text-sm font-medium text-muted">{label}</p><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand"><Icon /></span></div>
       <p className="mt-4 text-3xl font-semibold tracking-tight text-ink">{value}</p><p className="mt-2 text-xs leading-5 text-subtle">{hint}</p>
-    </Card>)}</div>
+    </div>)}</div>
     <div className="grid gap-5 lg:grid-cols-3">
       <Card className="p-6 lg:col-span-2">
         <div className="flex items-start justify-between gap-4"><div><h2 className="font-semibold">Booking activity</h2><p className="mt-1 text-sm text-muted">Appointments over the last 7 days</p></div><span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand">{data.week.reduce((total, day) => total + day.count, 0)} bookings</span></div>
         <div className="mt-6 grid grid-cols-7 gap-2 sm:gap-5" aria-label="Daily booking counts">{data.week.map((day) => <div key={day.date} className="flex flex-col items-center gap-2">
           <span className="text-xs font-medium text-muted">{day.count}</span>
-          <div className="flex h-32 w-full max-w-12 items-end rounded-lg bg-brand-soft/60"><div className="w-full rounded-lg bg-brand-strong transition-all" style={{ height: day.count ? `${Math.max(4, day.count / peak * 100)}%` : "0%" }} /></div>
+          <div className="flex h-32 w-full max-w-12 items-end rounded-lg bg-brand-soft/60"><div className="w-full rounded-lg bg-brand transition-[height]" style={{ height: day.count ? `${Math.max(4, day.count / peak * 100)}%` : "0%" }} /></div>
           <span className="text-xs text-muted">{new Date(`${day.date}T12:00:00Z`).toLocaleDateString("en-IN", { weekday: "short", timeZone: "UTC" })}</span>
           <span className="sr-only">{day.date}: {day.count} bookings</span>
         </div>)}</div>

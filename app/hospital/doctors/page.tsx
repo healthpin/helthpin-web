@@ -51,7 +51,7 @@ export default async function DoctorsPage({ searchParams }: PageProps<"/hospital
         actions={<DoctorDialog />}
       />
 
-      <Card className="mb-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="mb-5 flex flex-col gap-3 bg-surface-low p-4 sm:flex-row sm:items-center sm:justify-between">
         <form action={BASE} className="flex flex-1 gap-2 sm:max-w-md">
           {status && <input type="hidden" name="status" value={status} />}
           <input
@@ -60,11 +60,11 @@ export default async function DoctorsPage({ searchParams }: PageProps<"/hospital
             defaultValue={search}
             placeholder="Search name, specialization or department"
             aria-label="Search doctors"
-            className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-3.5 text-sm text-ink outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15"
+            className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-3.5 text-sm text-ink outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15"
           />
           <button
             type="submit"
-            className="h-10 cursor-pointer rounded-lg border border-line bg-surface px-4 text-sm font-semibold text-ink hover:bg-canvas"
+            className="h-11 cursor-pointer rounded-xl border border-line bg-surface px-4 text-sm font-semibold text-ink hover:border-brand/30 hover:bg-brand-soft"
           >
             Search
           </button>
@@ -77,7 +77,7 @@ export default async function DoctorsPage({ searchParams }: PageProps<"/hospital
               aria-current={status === option.value ? "page" : undefined}
               className={cn(
                 "rounded-full px-3 py-1.5 text-sm font-medium",
-                status === option.value ? "bg-brand-soft text-brand" : "text-muted hover:bg-canvas",
+                status === option.value ? "bg-brand text-white shadow-sm" : "text-muted hover:bg-surface-high",
               )}
             >
               {option.label}

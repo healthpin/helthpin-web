@@ -23,12 +23,12 @@ export function AppShell({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh">
+    <div className="min-h-dvh bg-canvas">
       <Sidebar area={area} isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
-      <div className="flex min-h-dvh flex-col lg:pl-64">
+      <div className="flex min-h-dvh flex-col lg:pl-68">
         <Header area={area} account={account} onMenuClick={() => setMenuOpen(true)} />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <main className="flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-9">
+          <div className="mx-auto w-full max-w-[1480px]">{children}</div>
         </main>
       </div>
       <Toaster />

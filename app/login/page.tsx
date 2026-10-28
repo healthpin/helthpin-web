@@ -14,9 +14,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
   return (
     <AuthLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">Sign in</h1>
-        <p className="mt-1.5 text-sm text-muted">
+      <div className="mb-7">
+        <h1 className="text-[1.75rem] font-bold tracking-[-0.03em] text-ink">Welcome back</h1>
+        <p className="mt-2 text-sm leading-6 text-muted">
           Super Admins and hospitals sign in here with their email and password.
         </p>
       </div>

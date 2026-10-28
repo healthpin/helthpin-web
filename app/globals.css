@@ -1,41 +1,107 @@
 @import "tailwindcss";
 
-/*
- * Health Pin design tokens (same palette as the mobile app's Stitch design).
- * Use them as Tailwind classes: bg-brand, text-ink, border-line, ...
- */
+/* Health Pin logo-derived design tokens. Keep product color in this one place. */
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand: #00645a;
-  --color-brand-hover: #00544b;
-  --color-brand-strong: #087f73;
-  --color-brand-soft: #e3f2ef;
-  --color-brand-tint: #95f3e4;
+  --color-brand: #8a1044;
+  --color-brand-hover: #700c36;
+  --color-brand-strong: #b91e5b;
+  --color-brand-soft: #f7e7ed;
+  --color-brand-tint: #f5dea0;
+  --color-accent: #e8c96e;
+  --color-accent-soft: #fff4d3;
+  --color-accent-ink: #3e2d00;
 
-  --color-canvas: #f4f8f7;
+  --color-canvas: #fff9f7;
   --color-surface: #ffffff;
-  --color-ink: #141d1b;
-  --color-muted: #55615f;
-  --color-subtle: #6e7977;
-  --color-line: #dbe5e1;
+  --color-surface-low: #fcf2f3;
+  --color-surface-high: #f0dfe4;
+  --color-ink: #25181e;
+  --color-muted: #5f4e55;
+  --color-subtle: #78656c;
+  --color-line: #d9c5cb;
 
   --color-danger: #ba1a1a;
-  --color-danger-soft: #ffeceb;
-  --color-success: #006640;
-  --color-success-soft: #e2f7ec;
-  --color-warning: #8a5300;
-  --color-warning-soft: #fff1dc;
+  --color-danger-soft: #ffdad6;
+  --color-success: #246b4a;
+  --color-success-soft: #d8f2e2;
+  --color-warning: #805600;
+  --color-warning-soft: #fff0c7;
 
-  --shadow-card: 0 1px 2px rgb(20 29 27 / 0.04), 0 4px 16px rgb(20 29 27 / 0.06);
+  --shadow-card: 0 8px 24px -18px rgb(138 16 68 / 0.34), 0 2px 8px -5px rgb(37 24 30 / 0.12);
+  --shadow-float: 0 18px 48px -24px rgb(88 10 43 / 0.34), 0 4px 14px -8px rgb(37 24 30 / 0.18);
+}
+
+* {
+  scrollbar-color: var(--color-line) transparent;
 }
 
 html,
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
+  min-height: 100%;
+}
+
+html {
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  caret-color: var(--color-brand);
 }
 
 ::selection {
   background: var(--color-brand-tint);
+  color: var(--color-accent-ink);
+}
+
+:focus-visible {
+  outline-color: var(--color-brand);
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-subtle);
+  opacity: 1;
+}
+
+table,
+[data-tabular] {
+  font-variant-numeric: tabular-nums;
+}
+
+dialog::backdrop {
+  background: rgb(37 24 30 / 0.52);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
