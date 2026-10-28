@@ -17,7 +17,7 @@ export function DirectoryTable({
       <div className="hidden overflow-x-auto lg:block">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-subtle">
+            <tr className="border-b border-line bg-surface-low text-xs font-semibold uppercase tracking-[0.08em] text-subtle">
               <th scope="col" className="px-5 py-3">Hospital name</th>
               <th scope="col" className="px-4 py-3">Location</th>
               <th scope="col" className="px-4 py-3">State</th>
@@ -30,7 +30,7 @@ export function DirectoryTable({
           </thead>
           <tbody className="divide-y divide-line">
             {hospitals.map((h) => (
-              <tr key={h.id} className="group hover:bg-canvas/60">
+              <tr key={h.id} className="group transition-colors hover:bg-brand-soft/50">
                 <td className="max-w-72 px-5 py-3">
                   <Link
                     href={detailHref(h.id)}
@@ -63,7 +63,7 @@ export function DirectoryTable({
       <ul className="divide-y divide-line lg:hidden">
         {hospitals.map((h) => (
           <li key={h.id}>
-            <Link href={detailHref(h.id)} className="block px-4 py-4 hover:bg-canvas/60">
+            <Link href={detailHref(h.id)} className="block px-4 py-4 hover:bg-brand-soft/50">
               <p className="font-medium text-ink">{h.hospital_name}</p>
               <p className="mt-0.5 text-sm text-muted">
                 {[h.district, h.state].filter(Boolean).join(", ") || "—"}

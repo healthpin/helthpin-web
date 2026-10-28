@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils/cn";
 export function Logo({
   caption = "Super Admin",
   className,
+  inverse = false,
 }: {
   caption?: string | null;
   className?: string;
+  inverse?: boolean;
 }) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
@@ -16,8 +18,8 @@ export function Logo({
           so no background, tint or clipping is applied. Decorative: the wordmark names it. */}
       <Image src="/healthpin-logo.png" alt="" width={48} height={48} className="-mx-1 shrink-0" priority />
       <div className="leading-tight">
-        <p className="text-[15px] font-bold tracking-tight text-brand">Health Pin</p>
-        {caption && <p className="text-xs font-medium text-muted">{caption}</p>}
+        <p className={cn("text-[15px] font-bold tracking-tight", inverse ? "text-white" : "text-brand")}>Health Pin</p>
+        {caption && <p className={cn("text-xs font-medium", inverse ? "text-white/70" : "text-muted")}>{caption}</p>}
       </div>
     </div>
   );

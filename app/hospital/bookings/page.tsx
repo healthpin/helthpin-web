@@ -56,7 +56,7 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
         actions={
           <Link
             href="/hospital/queue"
-            className="rounded-lg border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink hover:bg-canvas"
+            className="rounded-[10px] border border-line bg-surface px-4 py-2.5 text-sm font-semibold text-ink hover:border-brand/30 hover:bg-brand-soft hover:text-brand"
           >
             Live queue
           </Link>
@@ -70,9 +70,9 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
             aria-current={scope === tab ? "page" : undefined}
             href={href({ scope: tab, status: undefined, page: 1 })}
             className={cn(
-              "-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold",
+              "-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors",
               scope === tab
-                ? "border-brand text-brand"
+                ? "border-accent text-brand"
                 : "border-transparent text-muted hover:text-ink",
             )}
           >
@@ -81,7 +81,7 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
         ))}
       </nav>
 
-      <Card className="mb-4 flex flex-col gap-3 p-4">
+      <Card className="mb-5 flex flex-col gap-3 bg-surface-low p-4">
         <form action={BASE} className="flex flex-col gap-2 sm:flex-row sm:items-center">
           {scope !== "all" && <input type="hidden" name="scope" value={scope} />}
           {status && <input type="hidden" name="status" value={status} />}
@@ -90,7 +90,7 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
             name="date"
             defaultValue={date ?? ""}
             aria-label="Appointment date"
-            className="h-10 rounded-lg border border-line bg-surface px-3 text-sm text-ink outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
+            className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink outline-none focus:border-brand focus:ring-4 focus:ring-brand/15"
           />
           <input
             type="search"
@@ -98,11 +98,11 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
             defaultValue={search}
             placeholder="Search patient, phone or doctor"
             aria-label="Search bookings"
-            className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-surface px-3.5 text-sm text-ink outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15"
+            className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-3.5 text-sm text-ink outline-none placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/15"
           />
           <button
             type="submit"
-            className="h-10 cursor-pointer rounded-lg border border-line bg-surface px-4 text-sm font-semibold text-ink hover:bg-canvas"
+            className="h-11 cursor-pointer rounded-xl border border-line bg-surface px-4 text-sm font-semibold text-ink hover:border-brand/30 hover:bg-brand-soft"
           >
             Apply
           </button>
@@ -116,7 +116,7 @@ export default async function BookingsPage({ searchParams }: PageProps<"/hospita
                 aria-current={status === option ? "page" : undefined}
                 className={cn(
                   "rounded-full px-3 py-1.5 text-sm font-medium",
-                  status === option ? "bg-brand-soft text-brand" : "text-muted hover:bg-canvas",
+                  status === option ? "bg-brand text-white shadow-sm" : "text-muted hover:bg-surface-high",
                 )}
               >
                 {option ?? "All"}

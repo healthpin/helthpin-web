@@ -38,10 +38,10 @@ export function Dialog({ open, onClose, title, description, children }: DialogPr
         if (event.target === ref.current) onClose(); // backdrop click
       }}
       aria-labelledby={titleId}
-      className="m-auto w-[calc(100%-2rem)] max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto overscroll-contain rounded-2xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-ink/40 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[calc(100%-2rem)] max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto overscroll-contain rounded-2xl border border-line bg-surface p-0 text-ink shadow-float backdrop:bg-ink/50"
     >
-      <div className="p-6">
-        <div className="mb-5 flex items-start justify-between gap-4">
+      <div className="p-5 sm:p-6">
+        <div className="mb-6 flex items-start justify-between gap-4 border-b border-line pb-4">
           <div>
             <h2 id={titleId} className="text-lg font-semibold">
               {title}

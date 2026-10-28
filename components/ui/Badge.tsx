@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils/cn";
 type Tone = "neutral" | "brand" | "warning";
 
 const tones: Record<Tone, string> = {
-  neutral: "bg-canvas text-muted",
-  brand: "bg-brand-soft text-brand",
+  neutral: "bg-surface-high text-muted",
+  brand: "bg-brand-soft text-brand ring-1 ring-brand/10",
   warning: "bg-warning-soft text-warning",
 };
 
@@ -14,7 +14,7 @@ export function Badge({ tone = "neutral", children }: { tone?: Tone; children: R
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+        "inline-flex min-h-6 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
         tones[tone],
       )}
     >

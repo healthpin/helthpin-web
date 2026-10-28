@@ -36,7 +36,7 @@ export function TextField({
           aria-invalid={error ? true : undefined}
           aria-describedby={message ? messageId : undefined}
           className={cn(
-            "h-11 w-full rounded-lg border bg-surface px-3.5 text-[15px] text-ink outline-none transition",
+            "h-12 w-full rounded-xl border bg-surface px-3.5 text-[15px] text-ink outline-none transition-[border-color,box-shadow,background-color]",
             "placeholder:text-subtle focus:ring-4",
             error
               ? "border-danger focus:border-danger focus:ring-danger/15"

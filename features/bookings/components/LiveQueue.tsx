@@ -61,10 +61,11 @@ function DoctorQueueCard({
           {doctor.queue.map((entry) => (
             <li
               key={entry.booking_id}
-              className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+              aria-current={entry.tokens_ahead === 0 ? "step" : undefined}
+              className={`relative flex flex-wrap items-center justify-between gap-3 px-4 py-3 ${entry.tokens_ahead === 0 ? "bg-brand-soft/50 before:absolute before:inset-y-3 before:left-0 before:w-1 before:rounded-r-full before:bg-accent" : ""}`}
             >
               <div className="flex items-center gap-3">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-canvas text-sm font-bold text-ink">
+                <span className={`grid size-9 shrink-0 place-items-center rounded-full text-sm font-bold ${entry.tokens_ahead === 0 ? "bg-brand text-white" : "bg-canvas text-ink"}`}>
                   {entry.token_number}
                 </span>
                 <div>

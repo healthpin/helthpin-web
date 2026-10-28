@@ -18,7 +18,7 @@ export function BookingsTable({ bookings, queue, prescriptions = {}, onChanged }
       <div className="hidden overflow-x-auto lg:block">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-subtle">
+            <tr className="border-b border-line bg-surface-low text-xs font-semibold uppercase tracking-[0.08em] text-subtle">
               <th scope="col" className="px-5 py-3">Booking</th>
               <th scope="col" className="px-4 py-3">Patient</th>
               <th scope="col" className="px-4 py-3">Doctor</th>
@@ -31,7 +31,7 @@ export function BookingsTable({ bookings, queue, prescriptions = {}, onChanged }
           </thead>
           <tbody className="divide-y divide-line">
             {bookings.map((b) => (
-              <tr key={b.booking_id} className="align-top hover:bg-canvas/60">
+              <tr key={b.booking_id} className="align-top transition-colors hover:bg-brand-soft/50">
                 <td className="whitespace-nowrap px-5 py-3 font-medium text-ink">{b.code}</td>
                 <td className="px-4 py-3">
                   <div className="font-medium text-ink">{b.patient_name}</div>

@@ -9,9 +9,9 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-brand text-white shadow-sm hover:bg-brand-hover focus-visible:outline-brand disabled:bg-brand/60",
+    "bg-brand text-white shadow-[0_5px_14px_-7px_rgba(138,16,68,0.72)] hover:bg-brand-hover hover:shadow-[0_7px_18px_-8px_rgba(138,16,68,0.72)] active:translate-y-px focus-visible:outline-brand disabled:bg-line disabled:text-subtle disabled:shadow-none",
   secondary:
-    "border border-line bg-surface text-ink hover:bg-canvas focus-visible:outline-brand",
+    "border border-line bg-surface text-ink hover:border-brand/30 hover:bg-brand-soft focus-visible:outline-brand",
   ghost: "text-muted hover:bg-brand-soft hover:text-brand focus-visible:outline-brand",
   danger: "bg-danger-soft text-danger hover:bg-danger/15 focus-visible:outline-danger",
 };
@@ -48,7 +48,7 @@ export function Button({
       disabled={disabled || isLoading}
       aria-busy={isLoading || undefined}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center rounded-lg font-semibold transition-colors",
+        "inline-flex cursor-pointer items-center justify-center rounded-[10px] font-semibold transition-[background-color,color,border-color,box-shadow,transform] duration-150",
         "focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed",
         variants[variant],
         sizes[size],
