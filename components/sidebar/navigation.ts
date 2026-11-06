@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-import { BuildingIcon, CalendarIcon, DashboardIcon, DirectoryIcon, StethoscopeIcon, UsersIcon, type IconProps } from "@/components/ui/icons";
+import { BuildingIcon, CalendarIcon, DashboardIcon, DirectoryIcon, ClipboardIcon, StethoscopeIcon, UsersIcon, type IconProps } from "@/components/ui/icons";
 
 export interface NavItem {
   label: string;
@@ -26,6 +26,7 @@ export const navigation: Record<ShellArea, NavSection[]> = {
       items: [
         { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
         { label: "Hospital Directory", href: "/dashboard/hospital-directory", icon: DirectoryIcon },
+        { label: "Hospital Registrations", href: "/hospital-registrations", icon: ClipboardIcon },
       ],
     },
   ],

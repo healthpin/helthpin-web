@@ -130,6 +130,10 @@ export const DirectoryIcon = (p: IconProps) => (
   </Icon>
 );
 
+export const ClipboardIcon = (p: IconProps) => (
+  <Icon {...p}><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V3h6v1M8 9h8M8 13h8M8 17h5" /></Icon>
+);
+
 export const MapPinIcon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
