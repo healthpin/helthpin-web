@@ -14,19 +14,25 @@ import { Toaster } from "@/components/ui/toast";
 export function AppShell({
   area,
   account,
+  headerAside,
+  locked,
   children,
 }: {
   area: ShellArea;
   account: ShellAccount;
+  /** Rendered in the header before the account (server-rendered content is fine). */
+  headerAside?: ReactNode;
+  /** Hospital without an active subscription (sidebar shows locked items). */
+  locked?: boolean;
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="min-h-dvh bg-canvas">
-      <Sidebar area={area} isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      <Sidebar area={area} isOpen={menuOpen} locked={locked} onClose={() => setMenuOpen(false)} />
       <div className="flex min-h-dvh flex-col lg:pl-68">
-        <Header area={area} account={account} onMenuClick={() => setMenuOpen(true)} />
+        <Header area={area} account={account} aside={headerAside} onMenuClick={() => setMenuOpen(true)} />
         <main className="flex-1 px-4 py-6 sm:px-7 lg:px-10 lg:py-9">
           <div className="mx-auto w-full max-w-[1480px]">{children}</div>
         </main>

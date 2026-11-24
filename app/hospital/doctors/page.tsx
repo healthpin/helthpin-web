@@ -10,7 +10,7 @@ import { listDoctors } from "@/features/doctors/api/doctorsApi";
 import { DoctorCard } from "@/features/doctors/components/DoctorCard";
 import { DoctorDialog } from "@/features/doctors/components/DoctorDialog";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
-import { requireHospital } from "@/lib/auth/session";
+import { requireSubscribedHospital } from "@/features/subscriptions/lib/access";
 import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = { title: "Doctors" };
@@ -23,7 +23,7 @@ const STATUSES = [
 ] as const;
 
 export default async function DoctorsPage({ searchParams }: PageProps<"/hospital/doctors">) {
-  await requireHospital();
+  await requireSubscribedHospital();
 
   const params = await searchParams;
   const search = typeof params.search === "string" ? params.search.trim() : "";

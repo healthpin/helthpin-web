@@ -119,3 +119,20 @@ a[href^="/hospital-registrations?status="] {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Printing (e.g. a payment receipt saved as PDF): only the page content. */
+@media print {
+  #admin-sidebar,
+  body header {
+    display: none !important;
+  }
+  .lg\:pl-68 {
+    padding-left: 0 !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}

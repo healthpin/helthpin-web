@@ -4,14 +4,14 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { getLiveQueue } from "@/features/bookings/api/bookingsApi";
 import { LiveQueue } from "@/features/bookings/components/LiveQueue";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
-import { requireHospital } from "@/lib/auth/session";
+import { requireSubscribedHospital } from "@/features/subscriptions/lib/access";
 
 export const metadata: Metadata = { title: "Live Queue" };
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export default async function QueuePage({ searchParams }: PageProps<"/hospital/queue">) {
-  await requireHospital();
+  await requireSubscribedHospital();
 
   const params = await searchParams;
   // No date: today at the hospital, decided by the server.
