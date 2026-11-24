@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/ui/Logo";
-import { CloseIcon } from "@/components/ui/icons";
+import { CloseIcon, LockIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils/cn";
 
 import { findNavItem, navigation, type ShellArea } from "./navigation";
@@ -15,9 +15,13 @@ interface SidebarProps {
   /** Mobile drawer state; the sidebar is always visible on large screens. */
   isOpen: boolean;
   onClose: () => void;
+  /** No active subscription: subscription-only items point to the Subscription page. */
+  locked?: boolean;
 }
 
-export function Sidebar({ area, isOpen, onClose }: SidebarProps) {
+const SUBSCRIPTION_PATH = "/hospital/subscription";
+
+export function Sidebar({ area, isOpen, onClose, locked = false }: SidebarProps) {
   const pathname = usePathname();
   const active = findNavItem(area, pathname);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -84,14 +88,18 @@ export function Sidebar({ area, isOpen, onClose }: SidebarProps) {
               <ul className="flex flex-col gap-1">
                 {section.items.map((item) => {
                   const isActive = active?.href === item.href;
+                  const isLocked = locked && item.requiresSubscription;
                   const Icon = item.icon;
                   return (
                     <li key={item.href}>
                       <Link
-                        href={item.href}
+                        href={isLocked ? SUBSCRIPTION_PATH : item.href}
                         onClick={() => !isDesktop && closeDrawer()}
                         aria-current={isActive ? "page" : undefined}
+                        aria-label={isLocked ? `${item.label} (subscription required)` : undefined}
+                        title={isLocked ? "Subscription required" : undefined}
                         className={cn(
+                          isLocked && "opacity-60",
                           "relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                           isActive
                             ? "bg-white text-brand before:absolute before:-left-3 before:h-7 before:w-1 before:rounded-r-full before:bg-accent"
@@ -100,6 +108,7 @@ export function Sidebar({ area, isOpen, onClose }: SidebarProps) {
                       >
                         <Icon />
                         {item.label}
+                        {isLocked && <LockIcon width={15} height={15} className="ml-auto" aria-hidden="true" />}
                       </Link>
                     </li>
                   );

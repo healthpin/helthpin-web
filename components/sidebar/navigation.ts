@@ -1,11 +1,13 @@
 import type { ComponentType } from "react";
 
-import { BuildingIcon, CalendarIcon, DashboardIcon, DirectoryIcon, ClipboardIcon, StethoscopeIcon, UsersIcon, type IconProps } from "@/components/ui/icons";
+import { BuildingIcon, CalendarIcon, CreditCardIcon, DashboardIcon, DirectoryIcon, ClipboardIcon, StethoscopeIcon, UsersIcon, type IconProps } from "@/components/ui/icons";
 
 export interface NavItem {
   label: string;
   href: string;
   icon: ComponentType<IconProps>;
+  /** Hospital pages that need an active free trial or paid subscription. */
+  requiresSubscription?: boolean;
 }
 
 export interface NavSection {
@@ -27,16 +29,18 @@ export const navigation: Record<ShellArea, NavSection[]> = {
         { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
         { label: "Hospital Directory", href: "/dashboard/hospital-directory", icon: DirectoryIcon },
         { label: "Hospital Registrations", href: "/hospital-registrations", icon: ClipboardIcon },
+        { label: "Subscription Management", href: "/subscriptions", icon: CreditCardIcon },
       ],
     },
   ],
   hospital: [
     {
       items: [
-        { label: "Overview", href: "/hospital/dashboard", icon: DashboardIcon },
-        { label: "Bookings", href: "/hospital/bookings", icon: CalendarIcon },
-        { label: "Doctors", href: "/hospital/doctors", icon: StethoscopeIcon },
-        { label: "Live Queue", href: "/hospital/queue", icon: UsersIcon },
+        { label: "Overview", href: "/hospital/dashboard", icon: DashboardIcon, requiresSubscription: true },
+        { label: "Bookings", href: "/hospital/bookings", icon: CalendarIcon, requiresSubscription: true },
+        { label: "Doctors", href: "/hospital/doctors", icon: StethoscopeIcon, requiresSubscription: true },
+        { label: "Live Queue", href: "/hospital/queue", icon: UsersIcon, requiresSubscription: true },
+        { label: "Subscription", href: "/hospital/subscription", icon: CreditCardIcon },
         { label: "Profile & Settings", href: "/hospital/settings", icon: BuildingIcon },
       ],
     },

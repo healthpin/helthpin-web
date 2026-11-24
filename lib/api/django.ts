@@ -61,7 +61,7 @@ export async function djangoFetch<T>(path: string, options: DjangoRequestOptions
 
   let response: Response;
   try {
-    response = await fetch(`${serverEnv.apiBaseUrl}${path}`, {
+    response = await fetch(`${serverEnv.apiBaseUrl}${path.startsWith("/") ? path : `/${path}`}`, {
       method: options.method ?? "GET",
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),

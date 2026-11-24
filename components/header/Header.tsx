@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { findNavItem, type ShellArea } from "@/components/sidebar/navigation";
 import { MenuIcon } from "@/components/ui/icons";
+import type { ReactNode } from "react";
 
 import { LogoutButton } from "./LogoutButton";
 
@@ -19,9 +20,11 @@ interface HeaderProps {
   area: ShellArea;
   account: ShellAccount;
   onMenuClick: () => void;
+  /** Optional item shown before the account, e.g. the hospital's payment reminder. */
+  aside?: ReactNode;
 }
 
-export function Header({ area, account, onMenuClick }: HeaderProps) {
+export function Header({ area, account, onMenuClick, aside }: HeaderProps) {
   const title = findNavItem(area, usePathname())?.label ?? "Health Pin";
   const initial = account.name.charAt(0).toUpperCase();
 
@@ -42,7 +45,8 @@ export function Header({ area, account, onMenuClick }: HeaderProps) {
         <h1 className="truncate text-lg font-semibold tracking-[-0.02em] text-ink">{title}</h1>
       </div>
 
-      <div className="ml-auto flex items-center gap-3">
+      <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+        {aside}
         <div className="hidden text-right sm:block">
           <p className="max-w-56 truncate text-sm font-medium text-ink">{account.name}</p>
           <p className="max-w-56 truncate text-xs text-muted">{account.detail}</p>

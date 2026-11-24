@@ -170,3 +170,24 @@ export const LockIcon = (p: IconProps) => (
 export const ClockIcon = (p: IconProps) => (
   <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Icon>
 );
+
+export const BellIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 9a6 6 0 0 1 12 0c0 4.5 1.5 6 2 7H4c.5-1 2-2.5 2-7" />
+    <path d="M10 19.5a2 2 0 0 0 4 0" />
+  </Icon>
+);
+
+export const CreditCardIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="2.5" y="5" width="19" height="14" rx="2.5" />
+    <path d="M2.5 10h19M6.5 15h4" />
+  </Icon>
+);
+
+export const ReceiptIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z" />
+    <path d="M9 8h6M9 12h6" />
+  </Icon>
+);

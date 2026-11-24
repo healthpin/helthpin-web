@@ -7,7 +7,7 @@ import { getLiveQueue, listBookings } from "@/features/bookings/api/bookingsApi"
 import { LiveBookings } from "@/features/bookings/components/LiveBookings";
 import { listPrescriptionsForBookings } from "@/features/prescriptions/api/prescriptionsApi";
 import { withHospitalToken } from "@/lib/auth/hospitalRequest";
-import { requireHospital } from "@/lib/auth/session";
+import { requireSubscribedHospital } from "@/features/subscriptions/lib/access";
 import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = { title: "Bookings" };
@@ -17,7 +17,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const PAST_STATUSES = ["Completed", "Cancelled"] as const;
 
 export default async function BookingsPage({ searchParams }: PageProps<"/hospital/bookings">) {
-  await requireHospital();
+  await requireSubscribedHospital();
 
   const params = await searchParams;
   // Upcoming = still to come. Past = finished (they move there on their own
